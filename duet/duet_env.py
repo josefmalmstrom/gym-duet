@@ -162,8 +162,11 @@ class DuetGame(gym.Env):
                     game_over = True
                     reward = 0
 
-        self.i += 1
-        self.i = self.i % NEW_OBS_INTERVAL
+            self.i += 1
+            self.i = self.i % NEW_OBS_INTERVAL
+
+            if self.capture and i != self.n_repeat_action - 1:
+                self.render()
 
         state = None
         if self.capture:
