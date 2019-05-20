@@ -64,15 +64,13 @@ class DuetGame(gym.Env):
         self.i = 1
 
         self._init_balls()
-        self.obstacle_manager = ObstacleManager()
-        self.obstacle_manager.new_obstacle_set()
 
         pygame.font.init()
         self.score_font = pygame.font.Font("freesansbold.ttf", 20)
         self.game_over_font = pygame.font.Font("freesansbold.ttf", 80)
         self.restart_font = pygame.font.Font("freesansbold.ttf", 20)
 
-    def man_init(self, state_rep="pixel", mode="ai", capture=True, n_repeat_action=1):
+    def man_init(self, state_rep="pixel", mode="ai", capture=True, n_repeat_action=1, random_obstacles=True):
         """
         For manual initialization after calling gym.make().
         """
@@ -88,6 +86,9 @@ class DuetGame(gym.Env):
         self.state_rep = state_rep
 
         self.n_repeat_action = n_repeat_action
+
+        self.obstacle_manager = ObstacleManager(random_obstacles)
+        self.obstacle_manager.new_obstacle_set()
 
     def reset(self):
         """

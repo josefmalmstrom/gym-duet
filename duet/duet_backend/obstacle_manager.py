@@ -27,9 +27,10 @@ class ObstacleManager(object):
     Generates and manages obstacles for the Duet game.
     """
 
-    def __init__(self):
+    def __init__(self, random_obstacles):
 
-        random.seed(221)  # for deterministic sequence
+        if not random_obstacles:
+            random.seed(221)  # for deterministic sequence
 
         self.obstacles = []
 
