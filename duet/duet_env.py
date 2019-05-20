@@ -3,9 +3,9 @@ from PIL import Image
 import gym
 from gym import spaces
 
-from gym_duet.envs.duet_backend.ball import Ball
-from gym_duet.envs.duet_backend.obstacle_manager import ObstacleManager
-from gym_duet.envs.duet_backend.controller import Controller
+from gym.envs.duet.duet_backend.ball import Ball
+from gym.envs.duet.duet_backend.obstacle_manager import ObstacleManager
+from gym.envs.duet.duet_backend.controller import Controller
 
 import contextlib
 with contextlib.redirect_stdout(None):
