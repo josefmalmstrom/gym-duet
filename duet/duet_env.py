@@ -87,6 +87,7 @@ class DuetGame(gym.Env):
 
         self.n_repeat_action = n_repeat_action
 
+        self.random_obstacles = random_obstacles
         self.obstacle_manager = ObstacleManager(random_obstacles)
         self.obstacle_manager.new_obstacle_set()
 
@@ -101,7 +102,7 @@ class DuetGame(gym.Env):
         self.i = 1
 
         self._init_balls()
-        self.obstacle_manager = ObstacleManager()
+        self.obstacle_manager = ObstacleManager(self.random_obstacles)
         self.obstacle_manager.new_obstacle_set()
 
         pygame.font.init()
