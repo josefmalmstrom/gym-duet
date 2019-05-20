@@ -16,3 +16,5 @@ register(
    	entry_point='gym.envs.duet:DuetGame',
 )
 ```
+
+Download or clone this repo and copy the folder ```duet``` into ```gym/envs```.
