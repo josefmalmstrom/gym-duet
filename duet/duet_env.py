@@ -41,8 +41,8 @@ class DuetGame(gym.Env):
 
     reward_range = (0, 1)
     action_space = spaces.Discrete(3)
-    # observation_space = spaces.Box(low=0, high=255, shape=OUTPUT_IMG_SIZE, dtype=np.uint8)
-    observation_space = spaces.Box(low=0, high=BOARD_HEIGHT, shape=(12,), dtype=np.uint8)
+    observation_space = spaces.Box(low=0, high=255, shape=OUTPUT_IMG_SIZE, dtype=np.uint8)
+    # observation_space = spaces.Box(low=0, high=BOARD_HEIGHT, shape=(12,), dtype=np.uint8)
 
     def __init__(self, mode="ai", capture=True):
 
