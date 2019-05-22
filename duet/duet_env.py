@@ -63,14 +63,12 @@ class DuetGame(gym.Env):
         self.score = 0
         self.i = 1
 
-        self._init_balls()
-
         pygame.font.init()
         self.score_font = pygame.font.Font("freesansbold.ttf", 20)
         self.game_over_font = pygame.font.Font("freesansbold.ttf", 80)
         self.restart_font = pygame.font.Font("freesansbold.ttf", 20)
 
-    def man_init(self, state_rep="pixel", mode="ai", capture=True, n_repeat_action=1, random_obstacles=True):
+    def man_init(self, state_rep="pixel", mode="ai", capture=True, n_repeat_action=1, random_obstacles=True, draw_rects=False):
         """
         For manual initialization after calling gym.make().
         """
@@ -91,6 +89,9 @@ class DuetGame(gym.Env):
         self.obstacle_manager = ObstacleManager(random_obstacles)
         self.obstacle_manager.new_obstacle_set()
 
+        self.draw_rects = draw_rects
+        self._init_balls(draw_rects)
+
     def reset(self):
         """
         Resets the game.
@@ -101,7 +102,7 @@ class DuetGame(gym.Env):
         self.score = 0
         self.i = 1
 
-        self._init_balls()
+        self._init_balls(self.draw_rects)
         self.obstacle_manager = ObstacleManager(self.random_obstacles)
         self.obstacle_manager.new_obstacle_set()
 
@@ -165,7 +166,7 @@ class DuetGame(gym.Env):
             self.i += 1
             self.i = self.i % NEW_OBS_INTERVAL
 
-            if self.capture and i != self.n_repeat_action - 1:
+            if i != self.n_repeat_action - 1:
                 self.render()
 
         state = None
@@ -272,7 +273,7 @@ class DuetGame(gym.Env):
 
         return coords
 
-    def _init_balls(self):
+    def _init_balls(self, draw_rects):
         """
         Initializes the red and blue balls.
         """
@@ -282,14 +283,14 @@ class DuetGame(gym.Env):
         blue_y = BOARD_HEIGHT - DIST_TO_BOTTOM
         blue_theta = np.pi
         self.blue_ball = Ball(blue_x, blue_y, blue_theta,
-                              CIRCLE_RADIUS, SPIN_STEP)
+                              CIRCLE_RADIUS, SPIN_STEP, draw_rects)
 
         # Create red ball
         red_x = BOARD_WIDTH//2 + CIRCLE_RADIUS
         red_y = BOARD_HEIGHT - DIST_TO_BOTTOM
         red_theta = 0
         self.red_ball = Ball(red_x, red_y, red_theta,
-                             CIRCLE_RADIUS, SPIN_STEP)
+                             CIRCLE_RADIUS, SPIN_STEP, draw_rects)
 
     def _move_balls(self):
         """

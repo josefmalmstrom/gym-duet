@@ -12,7 +12,7 @@ class Ball(object):
     Player ball in the Duet game.
     """
 
-    def __init__(self, x, y, theta, r, vel):
+    def __init__(self, x, y, theta, r, vel, draw_rects):
         """
         Creates a player ball with specified position and velocity.
         """
@@ -26,6 +26,8 @@ class Ball(object):
 
         self.ang_vel = vel
         self.radius = r
+
+        self.draw_rects = draw_rects
 
     def position(self):
         """
@@ -65,3 +67,5 @@ class Ball(object):
         """
         self.rect = pygame.draw.circle(screen, color,
                                        self.position(), BALL_RADIUS)
+        if self.draw_rects:
+            pygame.draw.rect(screen, color, self.rect)
