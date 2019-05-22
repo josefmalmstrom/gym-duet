@@ -22,7 +22,9 @@ SPIN_STEP = 0.0224  # angular step of player balls in radians
 
 NEW_OBS_INTERVAL = 140
 
-OUTPUT_IMG_SIZE = (84, 84, 3)
+PIXEL_STATE_SHAPE = (84, 84, 3)
+COORD_STATE_SHAPE = (20,)
+
 
 # Colors
 WHITE = (255, 255, 255)
@@ -41,8 +43,6 @@ class DuetGame(gym.Env):
 
     reward_range = (0, 1)
     action_space = spaces.Discrete(3)
-    observation_space = spaces.Box(low=0, high=255, shape=OUTPUT_IMG_SIZE, dtype=np.uint8)
-    # observation_space = spaces.Box(low=0, high=BOARD_HEIGHT, shape=(12,), dtype=np.uint8)
 
     def __init__(self, mode="ai", capture=True):
 
@@ -82,6 +82,10 @@ class DuetGame(gym.Env):
             self.action = None
 
         self.state_rep = state_rep
+        if self.state_rep == "pixel":
+            DuetGame.observation_space = spaces.Box(low=0, high=255, shape=PIXEL_STATE_SHAPE, dtype=np.uint8)
+        else:
+            DuetGame.observation_space = spaces.Box(low=0, high=BOARD_HEIGHT, shape=COORD_STATE_SHAPE, dtype=np.uint8)
 
         self.n_repeat_action = n_repeat_action
 
@@ -246,20 +250,19 @@ class DuetGame(gym.Env):
         is (0, 0, 0, 0) if there is no second obstacle.
         """
 
+        # Get the player coords
         blue_x, blue_y = self.blue_ball.position()
-        blue_x = float(blue_x)/BOARD_WIDTH
-        blue_y = float(blue_y)/BOARD_HEIGHT
-
         red_x, red_y = self.red_ball.position()
-        red_x = float(red_x)/BOARD_WIDTH
-        red_y = float(red_y)/BOARD_HEIGHT
 
+        coords = [blue_x, blue_y, red_x, red_y]
+
+        # Get the closest obstacle
         current_obstacle_set = self.obstacle_manager.oldest_obstacle_set()
 
         obs_1 = current_obstacle_set[0]
         left, right = obs_1.x_span()
         top, bottom = obs_1.get_top(), obs_1.get_bottom()
-        obs_1_coords = [float(top)/BOARD_HEIGHT, float(bottom)/BOARD_HEIGHT, float(left)/BOARD_WIDTH, float(right)/BOARD_WIDTH]
+        obs_1_coords = [top, bottom, left, right]
 
         if len(current_obstacle_set) == 1:
             obs_2_coords = [0, 0, 0, 0]
@@ -267,9 +270,33 @@ class DuetGame(gym.Env):
             obs_2 = current_obstacle_set[1]
             left, right = obs_2.x_span()
             top, bottom = obs_2.get_top(), obs_2.get_bottom()
-            obs_2_coords = [float(top)/BOARD_HEIGHT, float(bottom)/BOARD_HEIGHT, float(left)/BOARD_WIDTH, float(right)/BOARD_WIDTH]
+            obs_2_coords = [top, bottom, left, right]
 
-        coords = np.array([blue_x, blue_y, red_x, red_y] + obs_1_coords + obs_2_coords)
+        coords = coords + obs_1_coords + obs_2_coords
+
+        # Get the second closest obstacle
+        obstacles = self.obstacle_manager.get_obstacles()
+        if len(obstacles) < 2:
+            coords = coords + [0, 0, 0, 0, 0, 0, 0, 0]
+        else:
+            next_obstacle_set = obstacles[1]
+
+            obs_1 = current_obstacle_set[0]
+            left, right = obs_1.x_span()
+            top, bottom = obs_1.get_top(), obs_1.get_bottom()
+            obs_1_coords = [top, bottom, left, right]
+
+            if len(next_obstacle_set) == 1:
+                obs_2_coords = [0, 0, 0, 0]
+            else:
+                obs_2 = next_obstacle_set[1]
+                left, right = obs_2.x_span()
+                top, bottom = obs_2.get_top(), obs_2.get_bottom()
+                obs_2_coords = [top, bottom, left, right]
+
+            coords = coords + obs_1_coords + obs_2_coords
+
+        coords = np.array(coords)
 
         return coords
 
