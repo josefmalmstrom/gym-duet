@@ -1,5 +1,6 @@
 # gym-duet
-Popular mobile game Duet implemented as an OpenAI-gym environment.
+Popular mobile game Duet by Kumobius, available [here](https://www.duetgame.com/), implemented as an OpenAI-gym environment.
+Can be used to train reinforcement learning agents for the game, as done in [Duet DQN](https://github.com/josefmal/duet-DQN).
 
 ## Installation
 
@@ -18,3 +19,4 @@ register(
 ```
 
 Download or clone this repo and copy the folder ```duet``` into ```gym/envs```.
+
