@@ -23,7 +23,7 @@ SPIN_STEP = 0.0224  # angular step of player balls in radians
 NEW_OBS_INTERVAL = 140
 
 PIXEL_STATE_SHAPE = (84, 84, 3)
-COORD_STATE_SHAPE = (20,)
+COORD_STATE_SHAPE = (12,)
 
 
 # Colors
@@ -68,7 +68,7 @@ class DuetGame(gym.Env):
         self.game_over_font = pygame.font.Font("freesansbold.ttf", 80)
         self.restart_font = pygame.font.Font("freesansbold.ttf", 20)
 
-    def man_init(self, state_rep="pixel", mode="ai", capture=True, n_repeat_action=1, random_obstacles=True, draw_rects=False):
+    def man_init(self, state_rep="pixel", mode="ai", capture=True, n_repeat_action=1, random_obstacles=True, draw_rects=False, visualize=False):
         """
         For manual initialization after calling gym.make().
         """
@@ -95,6 +95,8 @@ class DuetGame(gym.Env):
 
         self.draw_rects = draw_rects
         self._init_balls(draw_rects)
+
+        self.visualize = visualize
 
     def reset(self):
         """
@@ -170,7 +172,7 @@ class DuetGame(gym.Env):
             self.i += 1
             self.i = self.i % NEW_OBS_INTERVAL
 
-            if i != self.n_repeat_action - 1:
+            if self.visualize and i != self.n_repeat_action - 1:
                 self.render()
 
         state = None
@@ -274,6 +276,7 @@ class DuetGame(gym.Env):
 
         coords = coords + obs_1_coords + obs_2_coords
 
+        """
         # Get the second closest obstacle
         obstacles = self.obstacle_manager.get_obstacles()
         if len(obstacles) < 2:
@@ -296,6 +299,7 @@ class DuetGame(gym.Env):
 
             coords = coords + obs_1_coords + obs_2_coords
 
+        """
         coords = np.array(coords)
 
         return coords
